@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/beesFragment">
+
+    <fragment
+        android:id="@+id/beesFragment"
+        android:name="com.example.mvvm_ejercicio_jmsb.BeesFragment"
+        android:label="@string/browser_bees"
+        tools:layout="@layout/fragment_bees" >
+        <action
+            android:id="@+id/action_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.example.mvvm_ejercicio_jmsb.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" />
+</navigation>

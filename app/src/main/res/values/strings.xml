@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Proyecto 1: Apico</string>
+    <string name="hello_blank_fragment" translatable="false">test</string>
+    <string name="tier1">Nivel 1</string>
+    <string name="tier2">Nivel 2</string>
+    <string name="tier3">Nivel 3</string>
+    <string name="tier4">Nivel 4</string>
+    <string name="tier5">Nivel 5</string>
+    <string name="tier6">Nivel 6</string>
+    <string name="forest">Bosque</string>
+    <string name="swamp">Pantano</string>
+    <string name="your_bees">Tus Abejas</string>
+    <string name="browser_bees">Buscar Abejas</string>
+    <string name="discover_bees">Descubrir Abejas</string>
+    <string name="details">Detalles</string>
+    <string name="deleted">Eliminado</string>
+    <string name="discover">Descubrir</string>
+    <string name="msg_alredady_have_bee_1">Ya tienes a la </string>
+    <string name="msg_alredady_have_bee_2"> en tu equipo</string>
+    <string name="msg_new_bee_1">La </string>
+    <string name="msg_new_bee_2"> fue añadida a tu equipo</string>
+
+    <string name="common_bee">Abeja Común</string>
+    <string name="forest_bee">Abeja del Bosque</string>
+    <string name="verge_bee">Abeja del Linde</string>
+    <string name="uncommon_bee">Abeja Inusual</string>
+    <string name="cutter_bee">Abeja Cortadora</string>
+    <string name="scrapper_bee">Abeja Raspadora</string>
+    <string name="delver_bee">Abeja Excavadora</string>
+    <string name="feller_bee">Abeja Hendedora</string>
+
+    <string name="verdant_bee">Abeja Verdor</string>
+    <string name="vibrant_bee">Abeja Vibrante</string>
+    <string name="drowsy_bee">Abeja Somnolienta</string>
+    <string name="misty_bee">Abeja Neblina</string>
+    <string name="dream_bee">Abeja Onírica</string>
+    <string name="murky_bee">Abeja Turbia</string>
+
+    <string name="muggy_bee">Abeja Húmeda</string>
+    <string name="glowing_bee">Abeja Brillante</string>
+    <string name="rocky_bee">Abeja Rocosa</string>
+    <string name="coral_bee">Abeja Coral</string>
+    <string name="custodian_bee">Abeja Custodia</string>
+    <string name="artisan_bee">Abeja Artesana</string>
+
+
+</resources>
