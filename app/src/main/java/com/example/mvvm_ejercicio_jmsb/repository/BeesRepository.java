@@ -14,10 +14,10 @@ public class BeesRepository {
     private List<Bee> beeList;
     boolean allowErase;
 
-    private BeesRepository(boolean preFiled, boolean allowErase) {
+    public BeesRepository(boolean preFiled, boolean allowErase) {
         beeList = new ArrayList<>();
         this.allowErase = allowErase;
-        if (preFiled) {
+        if (!preFiled) {
         } else {
             //Tier 1
             //Social
@@ -123,6 +123,16 @@ public class BeesRepository {
             beeList.add(artisanBee);
         }
 
+    }
+    public Bee getbee(int position) {
+        if (position >= 0 && position < beeList.size()) {
+            return beeList.get(position);
+        }
+        return null;
+    }
+
+    public void deleteBee(Bee bee) {
+        beeList.remove(bee);
     }
 
     public List<Bee> getBees() {

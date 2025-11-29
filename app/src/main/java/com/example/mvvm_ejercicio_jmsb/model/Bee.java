@@ -5,6 +5,7 @@ import com.example.mvvm_ejercicio_jmsb.model.Habitat;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.Objects;
 import java.util.Set;
 
 public class Bee implements Serializable {
@@ -100,5 +101,17 @@ public class Bee implements Serializable {
 
     public Habitat getHabitat() {
         return habitat;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Bee)) return false;
+        Bee bee = (Bee) o;
+        return commonName == bee.commonName && Objects.equals(posibleParents, bee.posibleParents) && Objects.equals(tier, bee.tier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commonName, posibleParents, tier);
     }
 }

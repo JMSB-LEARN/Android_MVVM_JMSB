@@ -40,14 +40,14 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
         Bee bee = bees.get(position);
 
         holder.binding.tvCommonName.setText(bee.getCommonName());
-        holder.binding.tvScientificName.setText(bee.getCommonName());
+        holder.binding.tvScientificName.setText(bee.getScientificName());
         holder.binding.ivBee.setImageResource(bee.getIconId());
         holder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bee", bee);
 
             NavController navController = Navigation.findNavController(v);
-            //action_to_detailsFragment, bundle);
+            navController.navigate(R.id.action_to_detailsFragment, bundle);
         });
     }
 
