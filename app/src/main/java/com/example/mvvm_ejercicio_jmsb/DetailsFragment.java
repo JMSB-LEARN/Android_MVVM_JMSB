@@ -16,14 +16,12 @@ import com.example.mvvm_ejercicio_jmsb.model.Bee;
 
 public class DetailsFragment extends Fragment {
 
-    // Variable para almacenar el animal recibido
     private Bee bee;
     private FragmentDetailsBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-// Recuperamos el argumento enviado desde el adapter (antes de crear la vista)
         if (getArguments() != null) {
             bee = (Bee) getArguments().getSerializable("bee");
         }
@@ -40,19 +38,16 @@ public class DetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (bee != null) {
-// Mostramos los datos del animal en la interfaz
             binding.tvNombreDetalle.setText(getString(bee.getCommonName()));
             binding.ivDetalle.setImageResource(bee.getIconId());
             binding.tvDescripcion.setText(bee.getHabitat().getDescription(view.getContext()));
         } else {
-// En caso de error, podríamos volver atrás o mostrar un mensaje
-            Toast.makeText(requireContext(), "No se pudo cargar el detalle del animal", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "No se pudo cargar el detalle de la abeja", Toast.LENGTH_SHORT).show();
             requireView().post(() -> {
-                if (isAdded()) { // Check if fragment is still attached to an activity
+                if (isAdded()) {
                     requireActivity().onBackPressed();
                 }
             });
-
         }
     }
 }

@@ -90,7 +90,7 @@ public class BeesRepository {
         Set<AbstractMap.SimpleEntry<Bee, Bee>> muggyParents = new HashSet<>();
         muggyParents.add(new AbstractMap.SimpleEntry<>(drowsyBee, mistyBee));
         Bee muggyBee = new Bee(muggyParents, R.string.muggy_bee, "Apis Vapora", R.drawable.muggy_bee, new int[][]{{4, 5}, {3, 4}, {4, 5}, {4, 5}}, new boolean[]{true, false, false}, new boolean[]{false, false, false}, Habitat.Forest, 3);
-        browserBeeList.add(murkyBee);
+        browserBeeList.add(muggyBee);
 
         Set<AbstractMap.SimpleEntry<Bee, Bee>> glowingParents = new HashSet<>();
         glowingParents.add(new AbstractMap.SimpleEntry<>(vibrantBee, verdantBee));
@@ -122,19 +122,6 @@ public class BeesRepository {
     public BeesRepository() {
         beeList = new ArrayList<>(browserBeeList);
     }
-
-    public Bee getbee(int position) {
-        // CHANGE: Use beeList instead of browserBeeList
-        if (position >= 0 && position < beeList.size()) {
-            return beeList.get(position);}
-        return null;
-    }
-
-    public void deleteBee(Bee bee) {
-        // CHANGE: Remove from beeList, not the static browserBeeList
-        beeList.remove(bee);
-    }
-
 
     public List<Bee> getBees() {
         return beeList;

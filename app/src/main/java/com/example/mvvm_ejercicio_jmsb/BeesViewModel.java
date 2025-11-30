@@ -6,35 +6,44 @@ import androidx.lifecycle.ViewModel;
 import com.example.mvvm_ejercicio_jmsb.model.Bee;
 import com.example.mvvm_ejercicio_jmsb.repository.BeesRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BeesViewModel extends ViewModel {
     private final BeesRepository beeRepository;
-    // Lo hacemos Mutable porque cambiará su valor (p.e. cuando eliminamos un Animal)
     public MutableLiveData<List<Bee>> bees = new MutableLiveData<>();
+    private List<Bee> allBees = new ArrayList<>();
 
-
-    public BeesViewModel(){
-        beeRepository = new BeesRepository();
-        bees.setValue(beeRepository.getBees());
-        bees.postValue(BeesRepository.getBrowserBees());
-    }
-
-    public void deleteBee(Bee bee) {
-        beeRepository.deleteBee(bee);
-        bees.setValue(beeRepository.getBees());
-    }
     public void getBees() {
-        bees.setValue(beeRepository.getBees());
+        List<Bee> data = beeRepository.getBees();
+        allBees = new ArrayList<>(data);
+        bees.setValue(data);
     }
 
-    public Bee getBee(int position) {
-        return beeRepository.getbee(position);
+    public BeesViewModel() {
+        beeRepository = new BeesRepository();
+        List<Bee> initialData = BeesRepository.getBrowserBees();
+        allBees = new ArrayList<>(initialData);
+        bees.setValue(initialData);
     }
+
     public void updateBee(Bee bee) {
         beeRepository.updateBee(bee);
-        // Refresh the LiveData so the UI updates
         bees.setValue(beeRepository.getBees());
+    }
+
+    public List<Bee> getAllBees() {
+        return allBees;
+
+    }
+
+    public Bee getFavBeeByPosition(int position) {
+        return bees.getValue().stream().filter(bee -> bee.isFav()).skip(position).findFirst().orElse(null);
+    }
+
+    public void unfavBee(Bee unfavBee) {
+        unfavBee.setFav(false);
+        updateBee(unfavBee);
     }
 
 }

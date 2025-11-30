@@ -17,17 +17,18 @@ import android.view.ViewGroup;
 import com.example.mvvm_ejercicio_jmsb.adapter.BeesAdapter;
 import com.example.mvvm_ejercicio_jmsb.databinding.FragmentFavBinding;
 import com.example.mvvm_ejercicio_jmsb.model.Bee;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class FavFragment extends Fragment {
 
     private FragmentFavBinding binding;
-    private BeesAdapter adapter;
+    private BeesAdapter beesAdapter;
     private BeesViewModel beesViewModel;
+    List<Bee> filteredList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,44 +40,90 @@ public class FavFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Initialize ViewModel (scoped to Activity to share data)
         beesViewModel = new ViewModelProvider(requireActivity()).get(BeesViewModel.class);
 
-        // 2. Setup Adapter and RecyclerView
-        adapter = new BeesAdapter(requireContext(), new ArrayList<>());
-        binding.recyclerViewBees.setAdapter(adapter);
+        beesAdapter = new BeesAdapter(getContext(), new ArrayList<>(), bee -> beesViewModel.updateBee(bee));
+
+        binding.recyclerViewBees.setAdapter(beesAdapter);
         binding.recyclerViewBees.setLayoutManager(new GridLayoutManager(requireContext(), 2));
 
-        // 3. Observe changes
-        beesViewModel.bees.observe(getViewLifecycleOwner(), lista -> {
-            adapter.establecerLista(lista);
+
+        beesViewModel.bees.observe(getViewLifecycleOwner(), beeList -> {
+            String currentQuery = binding.searchView.getQuery().toString();
+
+            if (currentQuery.isEmpty()) {
+                beesAdapter.establecerLista(getFavBees(beeList));
+            } else {
+                filteredList= filterByCommonName(currentQuery);
+            }
         });
 
-        // 4. ONLY load data if the list is currently empty or null.
-        // This prevents resetting the data when you navigate back to this fragment.
         if (beesViewModel.bees.getValue() == null || beesViewModel.bees.getValue().isEmpty()) {
             beesViewModel.getBees();
         }
+        binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterByCommonName(newText);
+                return true;
+            }
+        });
+
+        eventOutFromList(view);
     }
 
-    private void eventoEliminarElto(View view) {
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, // No permitimos mover elementos (drag)
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Permitimos deslizar a izquierda o derecha
-        ) {
+    private List<Bee> getFavBees(List<Bee> bees) {
+        return bees.stream().filter(bee -> bee.isFav()).collect(Collectors.toList());
+    }
+
+
+    private List<Bee> filterByCommonName(java.lang.String query) {
+        List<Bee> fullList = beesViewModel.getAllBees();
+
+        if (fullList == null) return null;
+
+        List<Bee> filtered = new ArrayList<>();
+        String lowerQuery = query.toLowerCase();
+
+        for (Bee bee : fullList) {
+            String name = getString(bee.getCommonName()).toLowerCase();
+
+            if (name.contains(lowerQuery)&&bee.isFav()) {
+                filtered.add(bee);
+            }
+        }
+        beesAdapter.establecerLista(filtered);
+        return filtered;
+    }
+
+    private void eventOutFromList(View view) {
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                // No necesitamos implementar el movimiento (solo eliminación)
                 return false;
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getBindingAdapterPosition();
+
+                if (position != RecyclerView.NO_POSITION) {
+                    Bee bee = beesAdapter.getBeeAt(position);
+
+                    if (bee != null) {
+                        bee.setFav(false);
+                        beesViewModel.updateBee(bee);
+                    }
+                }
             }
+
         };
-        beesViewModel.bees.observe(getViewLifecycleOwner(), listBee -> {
-            adapter.establecerLista(listBee); // Actualiza el RecyclerView
-        });
-        // Asociamos el callback al RecyclerView
+
         new ItemTouchHelper(callback).attachToRecyclerView(binding.recyclerViewBees);
     }
 }

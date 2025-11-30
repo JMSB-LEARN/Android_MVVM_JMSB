@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -22,12 +21,18 @@ import java.util.List;
 
 public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder> {
 
-    private List<Bee> bees;
 
+    public interface OnBeeListener {
+        void onFavoriteClick(Bee bee);
+    }
+
+    private List<Bee> bees;
     private final LayoutInflater inflater;
-    public BeesAdapter(Context context, List<Bee> abejas) {
+    private final OnBeeListener listener;
+    public BeesAdapter(Context context, List<Bee> abejas, OnBeeListener listener) {
         this.bees = abejas;
         this.inflater = LayoutInflater.from(context);
+        this.listener = listener;
     }
 
     @NonNull
@@ -37,32 +42,31 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
         return new BeeViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull BeeViewHolder holder, int position) {
         Bee bee = bees.get(position);
 
         holder.binding.tvCommonName.setText(bee.getCommonName());
         holder.binding.ivBee.setImageResource(bee.getIconId());
+        holder.binding.toggelFav.setOnCheckedChangeListener(null);
+        holder.binding.toggelFav.setChecked(bee.isFav());
+        holder.binding.toggelFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i("TAG", "onCheckedChanged: " + isChecked);
+                bee.setFav(isChecked);
+                if (listener != null) {
+                    listener.onFavoriteClick(bee);
+                }
+            }
+        });
+
         holder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("bee", bee);
 
             NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_to_detailsFragment, bundle);
-            holder.binding.toggelFav.setChecked(bee.isFav());
-
-        });
-        holder.binding.toggelFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.i("TAG", "onCheckedChanged: " + isChecked + "");
-                if (isChecked) {
-                    bee.setFav(true);
-                } else {
-                    bee.setFav(false);
-                }
-            }
         });
     }
 
@@ -77,7 +81,6 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
     }
 
     public static class BeeViewHolder extends RecyclerView.ViewHolder {
-
         ViewholderBeeBinding binding;
 
         public BeeViewHolder(@NonNull View itemView) {
@@ -85,6 +88,11 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
             binding = ViewholderBeeBinding.bind(itemView);
         }
     }
+    public Bee getBeeAt(int position) {
+        if (bees != null && position >= 0 && position < bees.size()) {
+            return bees.get(position);
+        }
+        return null;
+    }
 
 }
-

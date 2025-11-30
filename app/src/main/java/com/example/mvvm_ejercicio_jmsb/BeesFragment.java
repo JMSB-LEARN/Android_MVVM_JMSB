@@ -7,8 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,17 +15,14 @@ import android.view.ViewGroup;
 import com.example.mvvm_ejercicio_jmsb.adapter.BeesAdapter;
 import com.example.mvvm_ejercicio_jmsb.databinding.FragmentBeesBinding;
 import com.example.mvvm_ejercicio_jmsb.model.Bee;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BeesFragment extends Fragment {
 
     private FragmentBeesBinding binding;
-    private BeesAdapter adapter;
-
+    private BeesAdapter beesAdapter;
     private BeesViewModel beesViewModel;
 
     @Override
@@ -40,26 +35,55 @@ public class BeesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Initialize ViewModel (scoped to Activity to share data)
         beesViewModel = new ViewModelProvider(requireActivity()).get(BeesViewModel.class);
 
-        // 2. Setup Adapter and RecyclerView
-        adapter = new BeesAdapter(requireContext(), new ArrayList<>());
-        binding.recyclerViewBees.setAdapter(adapter);
+        beesAdapter = new BeesAdapter(getContext(), new ArrayList<>(), bee -> beesViewModel.updateBee(bee));
+
+        binding.recyclerViewBees.setAdapter(beesAdapter);
         binding.recyclerViewBees.setLayoutManager(new GridLayoutManager(requireContext(), 2));
 
-        // 3. Observe changes
-        beesViewModel.bees.observe(getViewLifecycleOwner(), lista -> {
-            adapter.establecerLista(lista);
+        beesViewModel.bees.observe(getViewLifecycleOwner(), beeList -> {
+            String currentQuery = binding.searchView.getQuery().toString();
+            if (currentQuery.isEmpty()) {
+                beesAdapter.establecerLista(beeList);
+            } else {
+                filterByCommonName(currentQuery);
+            }
         });
 
-        // 4. ONLY load data if the list is currently empty or null.
-        // This prevents resetting the data when you navigate back to this fragment.
         if (beesViewModel.bees.getValue() == null || beesViewModel.bees.getValue().isEmpty()) {
             beesViewModel.getBees();
         }
+
+        binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterByCommonName(newText);
+                return true;
+            }
+        });
     }
 
+    private void filterByCommonName(java.lang.String query) {
+        List<Bee> fullList = beesViewModel.getAllBees();
 
+        if (fullList == null) return;
 
+        List<Bee> filtered = new ArrayList<>();
+        String lowerQuery = query.toLowerCase();
+
+        for (Bee bee : fullList) {
+            String name = getString(bee.getCommonName()).toLowerCase();
+
+            if (name.contains(lowerQuery)) {
+                filtered.add(bee);
+            }
+        }
+        beesAdapter.establecerLista(filtered);
+    }
 }

@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/favFragment"
         android:name="com.example.mvvm_ejercicio_jmsb.FavFragment"
-        android:label="fragment_fav"
+        android:label="Favoritas"
         tools:layout="@layout/fragment_fav"
         >
         <action
