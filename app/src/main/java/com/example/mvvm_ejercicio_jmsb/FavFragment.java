@@ -15,24 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mvvm_ejercicio_jmsb.adapter.BeesAdapter;
-import com.example.mvvm_ejercicio_jmsb.databinding.FragmentBeesBinding;
+import com.example.mvvm_ejercicio_jmsb.databinding.FragmentFavBinding;
 import com.example.mvvm_ejercicio_jmsb.model.Bee;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 
-public class BeesFragment extends Fragment {
+public class FavFragment extends Fragment {
 
-    private FragmentBeesBinding binding;
+    private FragmentFavBinding binding;
     private BeesAdapter adapter;
-
     private BeesViewModel beesViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentBeesBinding.inflate(inflater, container, false);
+        binding = FragmentFavBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -60,6 +59,24 @@ public class BeesFragment extends Fragment {
         }
     }
 
+    private void eventoEliminarElto(View view) {
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, // No permitimos mover elementos (drag)
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT // Permitimos deslizar a izquierda o derecha
+        ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                // No necesitamos implementar el movimiento (solo eliminación)
+                return false;
+            }
 
-
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+        };
+        beesViewModel.bees.observe(getViewLifecycleOwner(), listBee -> {
+            adapter.establecerLista(listBee); // Actualiza el RecyclerView
+        });
+        // Asociamos el callback al RecyclerView
+        new ItemTouchHelper(callback).attachToRecyclerView(binding.recyclerViewBees);
+    }
 }

@@ -2,9 +2,12 @@ package com.example.mvvm_ejercicio_jmsb.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -40,7 +43,6 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
         Bee bee = bees.get(position);
 
         holder.binding.tvCommonName.setText(bee.getCommonName());
-        holder.binding.tvScientificName.setText(bee.getScientificName());
         holder.binding.ivBee.setImageResource(bee.getIconId());
         holder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -48,6 +50,19 @@ public class BeesAdapter extends RecyclerView.Adapter<BeesAdapter.BeeViewHolder>
 
             NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_to_detailsFragment, bundle);
+            holder.binding.toggelFav.setChecked(bee.isFav());
+
+        });
+        holder.binding.toggelFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i("TAG", "onCheckedChanged: " + isChecked + "");
+                if (isChecked) {
+                    bee.setFav(true);
+                } else {
+                    bee.setFav(false);
+                }
+            }
         });
     }
 

@@ -17,6 +17,7 @@ public class Bee implements Serializable {
     int[][] dominantStats, recesiveStats;
     boolean[] behaviour, climate;
     Habitat habitat;
+    boolean fav;
 
     public Bee(Set<AbstractMap.SimpleEntry<Bee, Bee>> posibleParents,int commonName, String scientificName, int iconId, int blessedIconId, int[][] dominantStats, int[][] recesiveStats, boolean[] behaviour, boolean[] climate, Habitat habitat, int tier) {
         this.posibleParents = posibleParents;
@@ -30,6 +31,7 @@ public class Bee implements Serializable {
         this.climate = climate;
         this.habitat = habitat;
         this.tier = tier;
+        this.fav=false;
     }
 
     public Bee(Set<AbstractMap.SimpleEntry<Bee, Bee>> posibleParents,int commonName, String scientificName, int iconId, int blessedIconId, int[][] dominantStats, boolean[] behaviour, boolean[] climate, Habitat habitat, int tier) {
@@ -113,5 +115,13 @@ public class Bee implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(commonName, posibleParents, tier);
+    }
+
+    public boolean isFav() {
+        return fav;
+    }
+
+    public void setFav(boolean state) {
+        this.fav = state;
     }
 }
